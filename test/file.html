@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Enregistrer un Utilisateur</title>
+</head>
+<body>
+
+<h2>Enregistrer un Nouvel Utilisateur</h2>
+
+<form id="userForm">
+    <label for="username">Nom d'utilisateur:</label><br>
+    <input type="text" id="username" name="username" required><br>
+    
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br>
+    
+    <label for="password">Mot de passe:</label><br>
+    <input type="password" id="password" name="password" required><br>
+    
+    <input type="button" value="Envoyer" onclick="submitForm()">
+</form> 
+
+<script>
+function submitForm() {
+    const formData = {
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+    };
+    
+    fetch('http://localhost:3000/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Success:', data);
+        alert('Utilisateur enregistré avec succès');
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        alert('Erreur lors de l\'enregistrement de l\'utilisateur');
+    });
+}
+</script>
+
+</body>
+</html>
