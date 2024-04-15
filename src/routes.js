@@ -1,5 +1,6 @@
 import User from './db/schemas/user-schema.js'
 import { encryptionPassword, comparePassword } from './utils/crypto-utils.js';
+import jwt from 'jsonwebtoken'
 
 export function registerRoutes(app) {
   // function qui récupère les données de la base de données
@@ -24,6 +25,7 @@ export function registerRoutes(app) {
     return request.body
   })
 
+
   app.post('/auth/token', async function handler(request, reply) {
     // on cherche l'utilisateur par son username ou son email
     const user = await User.findOne({
@@ -32,6 +34,17 @@ export function registerRoutes(app) {
         { email: request.body.username }
       ]
     })
+
+    const email = user.email
+
+    const token = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    console.log('email', email)
+    console.log('user', user)
+
     if (user === null) {
       return reply.status(401).send({ error: 'this user doesn\'t exit' })
     }
@@ -40,9 +53,7 @@ export function registerRoutes(app) {
       return reply.status(401).send({ error: 'password is incorrect' })
     }
     console.log('user connected')
-    return {}
+    return reply.status(201).send({ email });
+
   })
 }
-
-
-
